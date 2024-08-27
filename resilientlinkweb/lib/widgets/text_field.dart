@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class TextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final bool isPass;
-
   final IconData icon;
 
   const TextFieldInput({
@@ -27,10 +26,10 @@ class TextFieldInput extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.white,
-          isDense: true, // Reduce the overall height
+          isDense: true,
           contentPadding: const EdgeInsets.symmetric(
-            vertical: 10, // Adjust vertical padding inside the text field
-            horizontal: 10, // Adjust horizontal padding
+            vertical: 10,
+            horizontal: 10,
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
@@ -42,7 +41,7 @@ class TextFieldInput extends StatelessWidget {
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Color(0xFF015490),
-              width: 1,
+              width: .8,
             ),
           ),
         ),

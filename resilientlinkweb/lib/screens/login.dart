@@ -56,6 +56,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 241, 242, 244),
       body: Center(
         child: Container(
           width: 800,
@@ -82,7 +83,7 @@ class _LoginState extends State<Login> {
                       topLeft: Radius.circular(6.0),
                       bottomLeft: Radius.circular(6.0)),
                   child: Image.asset(
-                    "images/login.jpg",
+                    "images/login.png",
                     fit: BoxFit.cover,
                   ),
                 ),

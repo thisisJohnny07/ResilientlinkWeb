@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/screens/advisory.dart';
 import 'package:resilientlinkweb/screens/dashboard.dart';
 import 'package:resilientlinkweb/screens/donation.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
@@ -16,20 +17,14 @@ class _SideNavigationState extends State<SideNavigation> {
   bool _isDrawerOpen = true;
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
-    HomePage(),
-    Donations(),
-    Profile(),
-    Donations(),
-    Profile(),
-    Donations(),
+  static final List<Widget> _pages = <Widget>[
+    Advisory(),
+    const Donations(),
+    Advisory(),
+    const Donations(),
+    const Profile(),
+    const HomePage(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +36,22 @@ class _SideNavigationState extends State<SideNavigation> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Left side: Logo and Menu Icon
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Image.asset(
-                    "images/logo.png",
-                    width: 130,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = 0; // Navigate to the HomePage
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Image.asset(
+                      "images/logo.png",
+                      width: 130,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 55),
@@ -64,7 +65,6 @@ class _SideNavigationState extends State<SideNavigation> {
                 ),
               ],
             ),
-            // Right side: Search and Message Icons
             Row(
               children: [
                 IconButton(
@@ -78,24 +78,89 @@ class _SideNavigationState extends State<SideNavigation> {
                   color: const Color.fromARGB(255, 58, 58, 58),
                 ),
                 const SizedBox(width: 15),
-                SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: ClipOval(
-                    child: Image.network(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTszA7eMyFT_3WLcS-q04bOYoPBzyRtMNzx5g&s",
-                      fit: BoxFit.cover,
+                PopupMenuTheme(
+                  data: const PopupMenuThemeData(
+                    color: Colors.white,
+                  ),
+                  child: PopupMenuButton<int>(
+                    tooltip: '',
+                    itemBuilder: (BuildContext context) {
+                      return <PopupMenuEntry<int>>[
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: SizedBox(
+                            width: 130,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Color(0xFF015490),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Profile'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: SizedBox(
+                            width: 130,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  color: Color(0xFF015490),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Logout'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    offset: const Offset(0, 40),
+                    onSelected: (int result) {
+                      if (result == 1) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Profile()),
+                        );
+                      } else if (result == 2) {
+                        AuntServices().signout();
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 35,
+                          height: 35,
+                          child: ClipOval(
+                            child: Image.network(
+                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTszA7eMyFT_3WLcS-q04bOYoPBzyRtMNzx5g&s",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          email,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Icon(Icons.keyboard_arrow_down)
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  email,
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.bold),
-                ),
+                )
               ],
             ),
           ],
@@ -132,20 +197,6 @@ class _SideNavigationState extends State<SideNavigation> {
                             ],
                           ),
                         ),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(
-                            Icons.logout,
-                            color: Colors.black,
-                          ),
-                          title: const Text(
-                            'Logout',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          onTap: () {
-                            AuntServices().signout();
-                          },
-                        ),
                       ],
                     ),
                   ),
@@ -179,8 +230,6 @@ class _SideNavigationState extends State<SideNavigation> {
               setState(() {
                 _selectedIndex = index;
               });
-
-              // Delay the text opacity change to prevent glitch
               Future.delayed(const Duration(milliseconds: 10), () {
                 setState(() {});
               });
@@ -193,16 +242,13 @@ class _SideNavigationState extends State<SideNavigation> {
                     icon,
                     color: isSelected ? Colors.white : const Color(0xFF015490),
                   ),
-                  const SizedBox(width: 8), // Space between icon and text
+                  const SizedBox(width: 8),
                   Expanded(
                     child: AnimatedOpacity(
                       opacity: _isDrawerOpen ? 1.0 : 0.0,
                       duration: _isDrawerOpen
-                          ? const Duration(
-                              milliseconds: 600) // Delay for opening text
-                          : const Duration(
-                              milliseconds:
-                                  150), // Faster fade for closing text
+                          ? const Duration(milliseconds: 600)
+                          : const Duration(milliseconds: 150),
                       curve: Curves.easeInOut,
                       child: Text(
                         title,
@@ -224,11 +270,5 @@ class _SideNavigationState extends State<SideNavigation> {
         ),
       ),
     );
-  }
-
-// Helper function to introduce a delay for text visibility
-  Future<void> _showTextDelay() async {
-    await Future.delayed(
-        const Duration(milliseconds: 300)); // Delay before showing text
   }
 }
