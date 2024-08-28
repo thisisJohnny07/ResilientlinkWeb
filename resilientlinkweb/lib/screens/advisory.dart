@@ -1,9 +1,11 @@
+import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker_web/image_picker_web.dart';
+import 'package:resilientlinkweb/services/advisorylist.dart';
 import 'package:resilientlinkweb/widgets/advisory_textfield.dart';
+import 'package:resilientlinkweb/widgets/pop_menu.dart';
 import '../widgets/button.dart';
 
 class Advisory extends StatefulWidget {
@@ -19,8 +21,11 @@ class _AdvisoryState extends State<Advisory> {
   final TextEditingController _details = TextEditingController();
   final TextEditingController _expectation = TextEditingController();
   final TextEditingController _posibilities = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Uint8List? _pickedImage;
+  String _filename = 'No image selected';
+  bool dateFilter = true;
+  final CollectionReference advisory =
+      FirebaseFirestore.instance.collection("advisory");
 
   @override
   void dispose() {
@@ -33,10 +38,24 @@ class _AdvisoryState extends State<Advisory> {
   }
 
   Future<void> _pickImage() async {
-    final imageFile = await ImagePickerWeb.getImageAsBytes();
-    setState(() {
-      _pickedImage = imageFile;
+    final input = html.FileUploadInputElement()..accept = 'image/*';
+    input.onChange.listen((e) {
+      final files = input.files;
+      if (files!.isEmpty) return;
+
+      final reader = html.FileReader();
+      final file = files[0];
+
+      reader.readAsArrayBuffer(file);
+      reader.onLoadEnd.listen((e) {
+        setState(() {
+          _filename = file.name;
+          _pickedImage = reader.result as Uint8List?;
+        });
+      });
     });
+
+    input.click();
   }
 
   Future<void> _submitData() async {
@@ -46,10 +65,7 @@ class _AdvisoryState extends State<Advisory> {
     final expectations = _expectation.text;
     final posibilities = _posibilities.text;
 
-    if (title.isEmpty ||
-        details.isEmpty ||
-        expectations.isEmpty ||
-        posibilities.isEmpty) {
+    if (title.isEmpty || details.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields.')),
       );
@@ -58,7 +74,6 @@ class _AdvisoryState extends State<Advisory> {
 
     String imageUrl = '';
 
-    // Upload image if selected
     if (_pickedImage != null) {
       try {
         String filename = DateTime.now().microsecondsSinceEpoch.toString();
@@ -83,7 +98,7 @@ class _AdvisoryState extends State<Advisory> {
     }
 
     try {
-      await _firestore.collection('advisory').add({
+      await advisory.add({
         'title': title,
         'weatherSystem': weatherSystem,
         'details': details,
@@ -101,7 +116,8 @@ class _AdvisoryState extends State<Advisory> {
       _expectation.clear();
       _posibilities.clear();
       setState(() {
-        _pickedImage = null; // Clear selected image after successful upload
+        _pickedImage = null;
+        _filename = 'No image selected';
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -121,20 +137,51 @@ class _AdvisoryState extends State<Advisory> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    Icons.campaign,
-                    size: 30,
-                    color: Color(0xFF015490),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.campaign,
+                        size: 30,
+                        color: Color(0xFF015490),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Manage Advisories",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 8),
-                  Text(
-                    "Manage Advisories",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                            color: Color(0xFF015490),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                      ),
+                      Text(
+                        " / ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        "Manage Advisories",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -145,10 +192,53 @@ class _AdvisoryState extends State<Advisory> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
-                            spreadRadius: .5,
-                            blurRadius: .2,
+                            spreadRadius: 1,
+                            blurRadius: 0.2,
                           ),
                         ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Advisory List",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF015490),
+                                  ),
+                                ),
+                                PopMenu(
+                                  text1: "Latest",
+                                  text2: "Oldest",
+                                  width: 70,
+                                  icon1: Icons.update,
+                                  icon2: Icons.history,
+                                  v1: () {
+                                    setState(() {
+                                      dateFilter = true;
+                                    });
+                                  },
+                                  v2: () {
+                                    setState(() {
+                                      dateFilter = false;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            const Divider(),
+                            const SizedBox(height: 8),
+                            AdvisoryList(
+                              dateFilter: dateFilter,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -173,7 +263,7 @@ class _AdvisoryState extends State<Advisory> {
                           const Text(
                             "Publish Advisory",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF015490),
                             ),
@@ -205,23 +295,60 @@ class _AdvisoryState extends State<Advisory> {
                             label: "Posibilities *",
                             line: 2,
                           ),
-                          Center(
-                            child: Column(
-                              children: [
-                                IconButton(
-                                  onPressed: _pickImage,
-                                  icon: const Icon(Icons.camera_alt),
-                                ),
-                                _pickedImage != null
-                                    ? Image.memory(
-                                        _pickedImage!,
-                                        height: 100, // Adjust as needed
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const Text('No image selected'),
-                              ],
+                          Text(
+                            "Image",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black.withOpacity(0.7),
                             ),
                           ),
+                          const SizedBox(height: 2),
+                          Center(
+                            child: GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 1,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(5),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.cloud_upload,
+                                        size: 40,
+                                        color: const Color(0xFF015490)
+                                            .withOpacity(0.3),
+                                      ),
+                                      Text(
+                                        "Upload a File",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black.withOpacity(0.7),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        _filename,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black.withOpacity(0.7),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
                           MyButton(
                             onTab: _submitData,
                             text: "Publish",
@@ -231,7 +358,7 @@ class _AdvisoryState extends State<Advisory> {
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
         ),

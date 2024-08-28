@@ -18,10 +18,10 @@ class _SideNavigationState extends State<SideNavigation> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    Advisory(),
-    const Donations(),
-    Advisory(),
-    const Donations(),
+    const Advisory(),
+    Donations(),
+    const Advisory(),
+    Donations(),
     const Profile(),
     const HomePage(),
   ];
