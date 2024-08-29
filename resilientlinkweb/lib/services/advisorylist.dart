@@ -1,7 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:intl/intl.dart';
+import 'package:resilientlinkweb/widgets/dialog_box.dart';
 import 'package:resilientlinkweb/widgets/hoverText.dart';
+import 'package:resilientlinkweb/widgets/pop_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AdvisoryList extends StatelessWidget {
@@ -10,6 +16,12 @@ class AdvisoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _title = TextEditingController();
+    final TextEditingController _weatherSystem = TextEditingController();
+    final TextEditingController _details = TextEditingController();
+    final TextEditingController _expectation = TextEditingController();
+    final TextEditingController _posibilities = TextEditingController();
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('advisory')
@@ -35,6 +47,7 @@ class AdvisoryList extends StatelessWidget {
           itemCount: documents.length,
           itemBuilder: (context, index) {
             final advisory = documents[index].data() as Map<String, dynamic>;
+            final documentId = documents[index].id;
             final Timestamp? timestamp = advisory['timestamp'] as Timestamp?;
             final DateTime? dateTime = timestamp?.toDate();
             final String formattedDate = dateTime != null
@@ -55,7 +68,149 @@ class AdvisoryList extends StatelessWidget {
                             color: Colors.black.withOpacity(.5),
                             fontWeight: FontWeight.bold),
                       ),
-                      const Icon(Icons.more_vert, size: 18),
+                      PopMenu(
+                        text1: "Update",
+                        text2: "Delete",
+                        width: 80,
+                        icon1: Icons.edit,
+                        icon2: Icons.delete,
+                        v1: () async {
+                          _title.text = advisory['title'] ?? '';
+                          _weatherSystem.text = advisory['weatherSystem'] ?? '';
+                          _details.text = advisory['details'] ?? '';
+                          _expectation.text = advisory['expectations'] ?? '';
+                          _posibilities.text = advisory['posibilities'] ?? '';
+
+                          final TextEditingController _imageUrlController =
+                              TextEditingController(
+                                  text: advisory['image'] ?? '');
+
+                          // Variable to store the picked image data
+                          Uint8List? pickedImage;
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogBox(
+                                buttonText: "UPDATE",
+                                titleController: _title,
+                                weatherSystemController: _weatherSystem,
+                                detailsController: _details,
+                                expectationsController: _expectation,
+                                possibilitiesController: _posibilities,
+                                imageUrlController: _imageUrlController,
+                                pickImage: () async {
+                                  final file =
+                                      await ImagePickerWeb.getImageAsBytes();
+                                  if (file != null) {
+                                    pickedImage = file;
+                                    // Update the UI to reflect the picked image if needed
+                                    // Clear the existing image URL
+                                  }
+                                },
+                                onTap: () async {
+                                  try {
+                                    // Initialize newImageUrl with the current image URL
+                                    String newImageUrl =
+                                        _imageUrlController.text;
+
+                                    // Check if a new image was picked
+                                    if (pickedImage != null) {
+                                      // Generate a unique filename using the current timestamp
+                                      String filename = DateTime.now()
+                                          .microsecondsSinceEpoch
+                                          .toString();
+                                      // Define the reference to the 'images' directory in Firebase Storage
+                                      Reference referenceRoot =
+                                          FirebaseStorage.instance.ref();
+                                      Reference referenceImages =
+                                          referenceRoot.child('images');
+                                      Reference referenceImageToUpload =
+                                          referenceImages.child('$filename');
+
+                                      // Upload the selected image to the defined path
+                                      final uploadTask =
+                                          referenceImageToUpload.putData(
+                                        pickedImage!,
+                                        SettableMetadata(
+                                            contentType: 'image/jpeg'),
+                                      );
+                                      final snapshot =
+                                          await uploadTask.whenComplete(() {});
+
+                                      // Get the download URL of the uploaded image
+                                      newImageUrl =
+                                          await snapshot.ref.getDownloadURL();
+
+                                      // Delete the previous image from Firebase Storage if it exists
+                                      if (_imageUrlController.text.isNotEmpty) {
+                                        try {
+                                          final oldImageRef = FirebaseStorage
+                                              .instance
+                                              .refFromURL(
+                                                  _imageUrlController.text);
+                                          await oldImageRef.delete();
+                                          _imageUrlController.text = '';
+                                        } catch (e) {
+                                          print('Error deleting old image: $e');
+                                        }
+                                      }
+                                    }
+
+                                    // Update the Firestore document with the new values
+                                    await FirebaseFirestore.instance
+                                        .collection('advisory')
+                                        .doc(documentId)
+                                        .update({
+                                      'title': _title.text,
+                                      'weatherSystem': _weatherSystem.text,
+                                      'details': _details.text,
+                                      'expectations': _expectation.text,
+                                      'posibilities': _posibilities.text,
+                                      'image': newImageUrl,
+                                    });
+
+                                    Navigator.pop(context); // Close the dialog
+                                  } catch (error) {
+                                    // Handle the error
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Error updating document: $error')),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          );
+                        },
+                        v2: () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return DialogBox(
+                                onTap: () async {
+                                  final imageUrl = advisory['image'];
+                                  if (imageUrl != null && imageUrl.isNotEmpty) {
+                                    final storageRef = FirebaseStorage.instance
+                                        .refFromURL(imageUrl);
+
+                                    await storageRef.delete();
+                                  }
+                                  await FirebaseFirestore.instance
+                                      .collection('advisory')
+                                      .doc(documentId)
+                                      .delete();
+                                  Navigator.pop(context);
+                                },
+                                buttonText: 'OK',
+                              );
+                            },
+                          );
+                        },
+                        offset: 20,
+                        child: const Icon(Icons.more_vert, size: 18),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 5),
@@ -76,8 +231,8 @@ class AdvisoryList extends StatelessWidget {
                       ]),
                       const TableRow(
                         children: [
-                          SizedBox(height: 5),
-                          SizedBox(height: 5),
+                          SizedBox(height: 8),
+                          SizedBox(height: 8),
                         ],
                       ),
                       TableRow(children: [
@@ -91,8 +246,8 @@ class AdvisoryList extends StatelessWidget {
                       ]),
                       const TableRow(
                         children: [
-                          SizedBox(height: 5),
-                          SizedBox(height: 5),
+                          SizedBox(height: 8),
+                          SizedBox(height: 8),
                         ],
                       ),
                       TableRow(children: [
@@ -106,8 +261,8 @@ class AdvisoryList extends StatelessWidget {
                       ]),
                       const TableRow(
                         children: [
-                          SizedBox(height: 5),
-                          SizedBox(height: 5),
+                          SizedBox(height: 8),
+                          SizedBox(height: 8),
                         ],
                       ),
                       TableRow(children: [
@@ -121,8 +276,8 @@ class AdvisoryList extends StatelessWidget {
                       ]),
                       const TableRow(
                         children: [
-                          SizedBox(height: 5),
-                          SizedBox(height: 5),
+                          SizedBox(height: 8),
+                          SizedBox(height: 8),
                         ],
                       ),
                       TableRow(children: [
@@ -136,8 +291,8 @@ class AdvisoryList extends StatelessWidget {
                       ]),
                       const TableRow(
                         children: [
-                          SizedBox(height: 5),
-                          SizedBox(height: 5),
+                          SizedBox(height: 8),
+                          SizedBox(height: 8),
                         ],
                       ),
                       TableRow(children: [

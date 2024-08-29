@@ -8,6 +8,8 @@ class PopMenu extends StatelessWidget {
   final double width;
   final VoidCallback v1;
   final VoidCallback v2;
+  final double offset;
+  final Widget child;
 
   const PopMenu({
     super.key,
@@ -18,6 +20,8 @@ class PopMenu extends StatelessWidget {
     required this.icon2,
     required this.v1,
     required this.v2,
+    required this.child,
+    required this.offset,
   });
 
   @override
@@ -68,7 +72,7 @@ class PopMenu extends StatelessWidget {
             ),
           ];
         },
-        offset: const Offset(0, 40),
+        offset: Offset(0, offset),
         onSelected: (int result) {
           if (result == 1) {
             v1();
@@ -76,23 +80,7 @@ class PopMenu extends StatelessWidget {
             v2();
           }
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.05),
-              border: Border.all(width: 0.2)),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Icon(
-                Icons.calendar_today,
-                color: Color(0xFF015490),
-                size: 18,
-              ),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-        ),
+        child: child, // Use the custom child widget here
       ),
     );
   }

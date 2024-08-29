@@ -1,10 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/screens/advisory.dart';
 import 'package:resilientlinkweb/screens/dashboard.dart';
 import 'package:resilientlinkweb/screens/donation.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
 import 'package:resilientlinkweb/services/authentication.dart';
+import 'package:resilientlinkweb/widgets/pop_menu.dart';
+import 'package:resilientlinkweb/widgets/profile_logout.dart';
 
 class SideNavigation extends StatefulWidget {
   const SideNavigation({super.key});
@@ -28,11 +29,9 @@ class _SideNavigationState extends State<SideNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String email = user?.email ?? 'No email found';
-
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -78,95 +77,29 @@ class _SideNavigationState extends State<SideNavigation> {
                   color: const Color.fromARGB(255, 58, 58, 58),
                 ),
                 const SizedBox(width: 15),
-                PopupMenuTheme(
-                  data: const PopupMenuThemeData(
-                    color: Colors.white,
-                  ),
-                  child: PopupMenuButton<int>(
-                    tooltip: '',
-                    itemBuilder: (BuildContext context) {
-                      return <PopupMenuEntry<int>>[
-                        const PopupMenuItem<int>(
-                          value: 1,
-                          child: SizedBox(
-                            width: 130,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.person,
-                                  color: Color(0xFF015490),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text('Profile'),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const PopupMenuItem<int>(
-                          value: 2,
-                          child: SizedBox(
-                            width: 130,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.logout,
-                                  color: Color(0xFF015490),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text('Logout'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ];
+                PopMenu(
+                    text1: "Profile",
+                    text2: "Logout",
+                    width: 130,
+                    icon1: Icons.person,
+                    icon2: Icons.logout,
+                    v1: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Profile()),
+                      );
                     },
-                    offset: const Offset(0, 40),
-                    onSelected: (int result) {
-                      if (result == 1) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Profile()),
-                        );
-                      } else if (result == 2) {
-                        AuntServices().signout();
-                      }
+                    v2: () {
+                      AuntServices().signout();
                     },
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 35,
-                          height: 35,
-                          child: ClipOval(
-                            child: Image.network(
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTszA7eMyFT_3WLcS-q04bOYoPBzyRtMNzx5g&s",
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          email,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Icon(Icons.keyboard_arrow_down)
-                      ],
-                    ),
-                  ),
-                )
+                    offset: 40,
+                    child: const ProfileLogout())
               ],
             ),
           ],
         ),
         backgroundColor: Colors.white,
-        centerTitle: true,
       ),
       body: Row(
         children: <Widget>[

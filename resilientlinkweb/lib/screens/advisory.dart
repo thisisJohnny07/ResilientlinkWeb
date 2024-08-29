@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/services/advisorylist.dart';
 import 'package:resilientlinkweb/widgets/advisory_textfield.dart';
+import 'package:resilientlinkweb/widgets/date_filter.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
 import '../widgets/button.dart';
 
@@ -229,6 +230,8 @@ class _AdvisoryState extends State<Advisory> {
                                       dateFilter = false;
                                     });
                                   },
+                                  offset: 30,
+                                  child: const DateFilter(),
                                 ),
                               ],
                             ),
