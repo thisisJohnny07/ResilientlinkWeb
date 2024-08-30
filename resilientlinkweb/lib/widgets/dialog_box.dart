@@ -8,9 +8,9 @@ class DialogBox extends StatelessWidget {
   final TextEditingController? titleController;
   final TextEditingController? weatherSystemController;
   final TextEditingController? detailsController;
-  final TextEditingController? expectationsController;
-  final TextEditingController? possibilitiesController;
-  final TextEditingController? imageUrlController; // Add this if needed
+  final TextEditingController? hazardsController;
+  final TextEditingController? precautionsController;
+  final TextEditingController? imageUrlController;
 
   const DialogBox({
     super.key,
@@ -19,8 +19,8 @@ class DialogBox extends StatelessWidget {
     this.titleController,
     this.weatherSystemController,
     this.detailsController,
-    this.expectationsController,
-    this.possibilitiesController,
+    this.hazardsController,
+    this.precautionsController,
     this.imageUrlController, // Add this if needed
     this.pickImage,
   });
@@ -117,12 +117,12 @@ class DialogBox extends StatelessWidget {
                       line: 1,
                     ),
                     AdvisoryTextfield(
-                      textEditingController: expectationsController!,
+                      textEditingController: hazardsController!,
                       label: 'Expectations',
                       line: 1,
                     ),
                     AdvisoryTextfield(
-                      textEditingController: possibilitiesController!,
+                      textEditingController: precautionsController!,
                       label: 'Possibilities',
                       line: 1,
                     ),

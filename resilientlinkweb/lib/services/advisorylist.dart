@@ -19,8 +19,8 @@ class AdvisoryList extends StatelessWidget {
     final TextEditingController _title = TextEditingController();
     final TextEditingController _weatherSystem = TextEditingController();
     final TextEditingController _details = TextEditingController();
-    final TextEditingController _expectation = TextEditingController();
-    final TextEditingController _posibilities = TextEditingController();
+    final TextEditingController _hazards = TextEditingController();
+    final TextEditingController _precautions = TextEditingController();
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -78,8 +78,8 @@ class AdvisoryList extends StatelessWidget {
                           _title.text = advisory['title'] ?? '';
                           _weatherSystem.text = advisory['weatherSystem'] ?? '';
                           _details.text = advisory['details'] ?? '';
-                          _expectation.text = advisory['expectations'] ?? '';
-                          _posibilities.text = advisory['posibilities'] ?? '';
+                          _hazards.text = advisory['hazards'] ?? '';
+                          _precautions.text = advisory['precautions'] ?? '';
 
                           final TextEditingController _imageUrlController =
                               TextEditingController(
@@ -96,8 +96,8 @@ class AdvisoryList extends StatelessWidget {
                                 titleController: _title,
                                 weatherSystemController: _weatherSystem,
                                 detailsController: _details,
-                                expectationsController: _expectation,
-                                possibilitiesController: _posibilities,
+                                hazardsController: _hazards,
+                                precautionsController: _precautions,
                                 imageUrlController: _imageUrlController,
                                 pickImage: () async {
                                   final file =
@@ -165,8 +165,8 @@ class AdvisoryList extends StatelessWidget {
                                       'title': _title.text,
                                       'weatherSystem': _weatherSystem.text,
                                       'details': _details.text,
-                                      'expectations': _expectation.text,
-                                      'posibilities': _posibilities.text,
+                                      'hazards': _hazards.text,
+                                      'precautions': _precautions.text,
                                       'image': newImageUrl,
                                     });
 
@@ -267,11 +267,11 @@ class AdvisoryList extends StatelessWidget {
                       ),
                       TableRow(children: [
                         Text(
-                          "Expectations: ",
+                          "Hazards: ",
                           style: TextStyle(color: Colors.black.withOpacity(.5)),
                         ),
                         Text(
-                          advisory['expectations'] ?? 'No Expectations',
+                          advisory['hazards'] ?? 'No Expectations',
                         ),
                       ]),
                       const TableRow(
@@ -282,11 +282,11 @@ class AdvisoryList extends StatelessWidget {
                       ),
                       TableRow(children: [
                         Text(
-                          "Posibilities: ",
+                          "Precautions: ",
                           style: TextStyle(color: Colors.black.withOpacity(.5)),
                         ),
                         Text(
-                          advisory['posibilities'] ?? 'No posibility',
+                          advisory['precautions'] ?? 'No posibility',
                         ),
                       ]),
                       const TableRow(
@@ -300,25 +300,24 @@ class AdvisoryList extends StatelessWidget {
                           "Image: ",
                           style: TextStyle(color: Colors.black.withOpacity(.5)),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.image,
-                                size: 30, color: Color(0xFF015490)),
-                            const SizedBox(width: 5),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.search,
-                                  size: 14,
-                                ),
-                                HoverText(
-                                  text: "PREVIEW IMAGE",
-                                  onTap: () => _launchURL(advisory['image']),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
+                        advisory['image'] != null &&
+                                advisory['image'].isNotEmpty
+                            ? Row(
+                                children: [
+                                  const Icon(Icons.image,
+                                      size: 30, color: Color(0xFF015490)),
+                                  const SizedBox(width: 5),
+                                  const Icon(
+                                    Icons.search,
+                                    size: 14,
+                                  ),
+                                  HoverText(
+                                    text: "PREVIEW IMAGE",
+                                    onTap: () => _launchURL(advisory['image']),
+                                  ),
+                                ],
+                              )
+                            : Container()
                       ]),
                     ],
                   ),

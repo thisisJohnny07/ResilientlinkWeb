@@ -20,8 +20,8 @@ class _AdvisoryState extends State<Advisory> {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _weatherSystem = TextEditingController();
   final TextEditingController _details = TextEditingController();
-  final TextEditingController _expectation = TextEditingController();
-  final TextEditingController _posibilities = TextEditingController();
+  final TextEditingController _hazards = TextEditingController();
+  final TextEditingController _precautions = TextEditingController();
   Uint8List? _pickedImage;
   String _filename = 'No image selected';
   bool dateFilter = true;
@@ -33,8 +33,8 @@ class _AdvisoryState extends State<Advisory> {
     _title.dispose();
     _weatherSystem.dispose();
     _details.dispose();
-    _expectation.dispose();
-    _posibilities.dispose();
+    _hazards.dispose();
+    _precautions.dispose();
     super.dispose();
   }
 
@@ -63,8 +63,8 @@ class _AdvisoryState extends State<Advisory> {
     final title = _title.text;
     final weatherSystem = _weatherSystem.text;
     final details = _details.text;
-    final expectations = _expectation.text;
-    final posibilities = _posibilities.text;
+    final hazards = _hazards.text;
+    final precautions = _precautions.text;
 
     if (title.isEmpty || details.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,8 +103,8 @@ class _AdvisoryState extends State<Advisory> {
         'title': title,
         'weatherSystem': weatherSystem,
         'details': details,
-        'expectations': expectations,
-        'posibilities': posibilities,
+        'hazards': hazards,
+        'precautions': precautions,
         "image": imageUrl,
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -114,8 +114,8 @@ class _AdvisoryState extends State<Advisory> {
       _title.clear();
       _weatherSystem.clear();
       _details.clear();
-      _expectation.clear();
-      _posibilities.clear();
+      _hazards.clear();
+      _precautions.clear();
       setState(() {
         _pickedImage = null;
         _filename = 'No image selected';
@@ -130,7 +130,7 @@ class _AdvisoryState extends State<Advisory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 241, 242, 244),
+      backgroundColor: const Color(0xFFF0F8FF),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -289,13 +289,13 @@ class _AdvisoryState extends State<Advisory> {
                             line: 3,
                           ),
                           AdvisoryTextfield(
-                            textEditingController: _expectation,
-                            label: "What to Expect *",
+                            textEditingController: _hazards,
+                            label: "Hazards",
                             line: 2,
                           ),
                           AdvisoryTextfield(
-                            textEditingController: _posibilities,
-                            label: "Posibilities *",
+                            textEditingController: _precautions,
+                            label: "Precautions",
                             line: 2,
                           ),
                           Text(
