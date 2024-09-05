@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/screens/advisory.dart';
 import 'package:resilientlinkweb/screens/dashboard.dart';
 import 'package:resilientlinkweb/screens/donation.dart';
+import 'package:resilientlinkweb/screens/messages.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
 import 'package:resilientlinkweb/services/authentication.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
@@ -19,7 +20,7 @@ class _SideNavigationState extends State<SideNavigation> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    const Advisory(),
+    const HomePage(),
     Donations(),
     const Advisory(),
     Donations(),
@@ -31,6 +32,7 @@ class _SideNavigationState extends State<SideNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +70,12 @@ class _SideNavigationState extends State<SideNavigation> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.mail, color: Color(0xFF015490)),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Messages()),
+                    );
+                  },
                 ),
                 const SizedBox(width: 15),
                 Container(

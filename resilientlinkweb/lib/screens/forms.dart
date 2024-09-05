@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/widgets/button.dart';
 
 class MyForm extends StatefulWidget {
   const MyForm({super.key});
@@ -36,6 +37,10 @@ class _MyFormState extends State<MyForm> {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController title0 = TextEditingController();
+    final CollectionReference advisory =
+        FirebaseFirestore.instance.collection("advisory");
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Firebase Form Example'),
@@ -56,6 +61,28 @@ class _MyFormState extends State<MyForm> {
             ElevatedButton(
               onPressed: _submitData,
               child: const Text('Submit'),
+            ),
+            Container(
+              color: const Color.fromARGB(255, 241, 242, 244),
+              child: Center(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: title0,
+                    ),
+                    MyButton(
+                      onTab: () {
+                        final title = title0.text;
+                        advisory.add({
+                          'title': title,
+                          'timestamp': FieldValue.serverTimestamp(),
+                        });
+                      },
+                      text: 'Submit',
+                    )
+                  ],
+                ),
+              ),
             ),
           ],
         ),
