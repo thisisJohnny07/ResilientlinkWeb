@@ -80,7 +80,7 @@ class PopMenu extends StatelessWidget {
             v2();
           }
         },
-        child: child, // Use the custom child widget here
+        child: child,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/screens/messages.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
 import 'package:resilientlinkweb/screens/sidenavigation.dart';
 import 'package:resilientlinkweb/services/authentication.dart';
@@ -42,7 +43,12 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.mail, color: Color(0xFF015490)),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Messages()),
+                  );
+                },
               ),
               const SizedBox(width: 15),
               Container(

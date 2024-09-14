@@ -18,9 +18,7 @@ class MyButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),

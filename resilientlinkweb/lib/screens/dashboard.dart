@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/widgets/dashboard_stat.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,76 +9,132 @@ class HomePage extends StatelessWidget {
     final CollectionReference advisory =
         FirebaseFirestore.instance.collection("advisory");
     QuerySnapshot snapshot = await advisory.get();
-    return snapshot.size; // Returns the number of documents in the collection
+    return snapshot.size;
   }
 
   Future<int> getUserCount() async {
     final CollectionReference users =
         FirebaseFirestore.instance.collection("users");
     QuerySnapshot snapshot = await users.get();
-    return snapshot.size; // Returns the number of documents in the collection
+    return snapshot.size;
+  }
+
+  Future<int> getDonationDriveCount() async {
+    final CollectionReference donationDrive =
+        FirebaseFirestore.instance.collection("donation_drive");
+    QuerySnapshot snapshot = await donationDrive.get();
+    return snapshot.size;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F8FF),
-      body: Center(
-        child: FutureBuilder<Map<String, int>>(
-          future: Future.wait([
-            getAdvisoryCount(),
-            getUserCount(),
-          ]).then((List<int> counts) {
-            return {
-              "advisoryCount": counts[0],
-              "userCount": counts[1],
-            };
-          }),
-          builder:
-              (BuildContext context, AsyncSnapshot<Map<String, int>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              final advisoryCount = snapshot.data?['advisoryCount'] ?? 0;
-              final userCount = snapshot.data?['userCount'] ?? 0;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.blueAccent,
-                      borderRadius: BorderRadius.circular(8),
+      backgroundColor: const Color(0xFFf1f4f4),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.dashboard,
+                      size: 30,
+                      color: Color(0xFF015490),
                     ),
-                    child: Text(
-                      'Number of Advisories: $advisoryCount',
+                    SizedBox(width: 8),
+                    Text(
+                      "Admin Dashboard",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Home",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                          color: Color(0xFF015490),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14),
+                    ),
+                    Text(
+                      " / ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.greenAccent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Number of Users: $userCount',
+                    Text(
+                      "Dashboard",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                     ),
-                  ),
-                ],
-              );
-            }
-          },
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            FutureBuilder<Map<String, int>>(
+              future: Future.wait([
+                getAdvisoryCount(),
+                getUserCount(),
+                getDonationDriveCount(),
+              ]).then((List<int> counts) {
+                return {
+                  "advisoryCount": counts[0],
+                  "userCount": counts[1],
+                  "donationDriveCount": counts[2],
+                };
+              }),
+              builder: (BuildContext context,
+                  AsyncSnapshot<Map<String, int>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final advisoryCount = snapshot.data?['advisoryCount'] ?? 0;
+                  final userCount = snapshot.data?['userCount'] ?? 0;
+                  final donationDriveCount =
+                      snapshot.data?['donationDriveCount'] ?? 0;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      DashboardStat(
+                        stat: '$advisoryCount',
+                        label: 'Advisory Alerts',
+                        icon: Icons.campaign,
+                      ),
+                      const SizedBox(width: 15),
+                      DashboardStat(
+                        stat: '$userCount',
+                        label: 'Registered Users',
+                        icon: Icons.group,
+                      ),
+                      const SizedBox(width: 15),
+                      DashboardStat(
+                        stat: '$donationDriveCount',
+                        label: 'Donation Drives',
+                        icon: Icons.volunteer_activism,
+                      ),
+                      const SizedBox(width: 15),
+                      const DashboardStat(
+                        stat: '30',
+                        label: 'Registered Personnel',
+                        icon: Icons.how_to_reg,
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

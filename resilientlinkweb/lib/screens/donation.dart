@@ -1,6 +1,6 @@
-import 'dart:html' as html;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/output/donation_list.dart';
+import 'package:resilientlinkweb/screens/add_donation_drive.dart';
 
 class Donations extends StatefulWidget {
   @override
@@ -8,52 +8,125 @@ class Donations extends StatefulWidget {
 }
 
 class _DonationsState extends State<Donations> {
-  String _filename = 'No image selected';
-  Uint8List? _imageData;
-
-  void _pickImage() {
-    final input = html.FileUploadInputElement()..accept = 'image/*';
-    input.onChange.listen((e) async {
-      final files = input.files;
-      if (files!.isEmpty) return;
-
-      final reader = html.FileReader();
-      final file = files[0];
-
-      reader.readAsArrayBuffer(file);
-      reader.onLoadEnd.listen((e) {
-        setState(() {
-          _imageData = reader.result as Uint8List?;
-          _filename = file.name;
-        });
-      });
-    });
-
-    input.click();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Donations')),
+      backgroundColor: const Color(0xFFf1f4f4),
       body: SingleChildScrollView(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text('Pick an Image'),
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.volunteer_activism,
+                        size: 30,
+                        color: Color(0xFF015490),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Manage Donation Drives",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                            color: Color(0xFF015490),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                      ),
+                      Text(
+                        " / ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        "Donation Drives",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              if (_imageData != null) ...[
-                Image.memory(_imageData!),
-                SizedBox(height: 20),
-              ],
-              Text(
-                _filename,
-                style: TextStyle(fontSize: 16),
-              ),
+              const SizedBox(height: 20),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 0.2,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Donation Drive List",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF015490),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              // callendar here
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddDonationDrive(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF015490),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                ),
+                                child: const Text(
+                                  "ADD NEW",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const Divider(),
+                      const DonationList(dateFilter: true),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ),

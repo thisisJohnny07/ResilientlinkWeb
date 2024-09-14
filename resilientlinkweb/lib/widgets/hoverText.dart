@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class HoverText extends StatefulWidget {
   final String text;
   final VoidCallback onTap;
+  final bool? blue;
 
-  const HoverText({Key? key, required this.text, required this.onTap})
+  const HoverText(
+      {Key? key, required this.text, required this.onTap, this.blue})
       : super(key: key);
 
   @override
@@ -32,10 +34,13 @@ class _HoverTextState extends State<HoverText> {
         child: Text(
           widget.text,
           style: TextStyle(
-            color: Colors.black.withOpacity(0.5),
-            fontSize: 10,
+            color: widget.blue == true
+                ? Colors.blue
+                : Colors.black.withOpacity(0.5),
+            fontSize: widget.blue == true ? 14 : 10,
             decoration:
                 _isHovering ? TextDecoration.underline : TextDecoration.none,
+            decorationColor: widget.blue == true ? Colors.blue : Colors.black,
           ),
         ),
       ),

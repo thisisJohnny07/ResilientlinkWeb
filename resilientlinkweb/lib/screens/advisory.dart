@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:resilientlinkweb/services/advisorylist.dart';
+import 'package:resilientlinkweb/output/advisorylist.dart';
 import 'package:resilientlinkweb/widgets/advisory_textfield.dart';
 import 'package:resilientlinkweb/widgets/date_filter.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
@@ -130,7 +130,7 @@ class _AdvisoryState extends State<Advisory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F8FF),
+      backgroundColor: const Color(0xFFf1f4f4),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
