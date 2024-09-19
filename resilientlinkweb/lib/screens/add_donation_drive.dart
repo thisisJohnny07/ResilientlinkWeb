@@ -98,11 +98,16 @@ class _AddDonationDriveState extends State<AddDonationDrive> {
       return;
     }
 
+    if (_isAid == true) {
+      if (itemsNeeded.isEmpty) {
+        return;
+      }
+    }
+
     try {
       if (imageUrl.isNotEmpty &&
           title.isNotEmpty &&
           purpose.isNotEmpty &&
-          itemsNeeded.isNotEmpty &&
           proponent.isNotEmpty) {
         await FirebaseFirestore.instance.collection('donation_drive').add({
           'title': title,

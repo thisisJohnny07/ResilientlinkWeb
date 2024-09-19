@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/output/donation_list.dart';
 import 'package:resilientlinkweb/screens/add_donation_drive.dart';
+import 'package:resilientlinkweb/screens/sidenavigation.dart';
 
 class Donations extends StatefulWidget {
   @override
@@ -18,10 +19,10 @@ class _DonationsState extends State<Donations> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(
                         Icons.volunteer_activism,
@@ -38,21 +39,30 @@ class _DonationsState extends State<Donations> {
                   ),
                   Row(
                     children: [
-                      Text(
-                        "Home",
-                        style: TextStyle(
-                            color: Color(0xFF015490),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SideNavigation()));
+                        },
+                        child: const Text(
+                          "Home",
+                          style: TextStyle(
+                              color: Color(0xFF015490),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                        ),
                       ),
-                      Text(
+                      const Text(
                         " / ",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "Donation Drives",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,

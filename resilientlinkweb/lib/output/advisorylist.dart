@@ -16,11 +16,11 @@ class AdvisoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _title = TextEditingController();
-    final TextEditingController _weatherSystem = TextEditingController();
-    final TextEditingController _details = TextEditingController();
-    final TextEditingController _hazards = TextEditingController();
-    final TextEditingController _precautions = TextEditingController();
+    final TextEditingController title = TextEditingController();
+    final TextEditingController weatherSystem = TextEditingController();
+    final TextEditingController details = TextEditingController();
+    final TextEditingController hazards = TextEditingController();
+    final TextEditingController precautions = TextEditingController();
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -75,11 +75,11 @@ class AdvisoryList extends StatelessWidget {
                         icon1: Icons.edit,
                         icon2: Icons.delete,
                         v1: () async {
-                          _title.text = advisory['title'] ?? '';
-                          _weatherSystem.text = advisory['weatherSystem'] ?? '';
-                          _details.text = advisory['details'] ?? '';
-                          _hazards.text = advisory['hazards'] ?? '';
-                          _precautions.text = advisory['precautions'] ?? '';
+                          title.text = advisory['title'] ?? '';
+                          weatherSystem.text = advisory['weatherSystem'] ?? '';
+                          details.text = advisory['details'] ?? '';
+                          hazards.text = advisory['hazards'] ?? '';
+                          precautions.text = advisory['precautions'] ?? '';
 
                           final TextEditingController _imageUrlController =
                               TextEditingController(
@@ -93,12 +93,11 @@ class AdvisoryList extends StatelessWidget {
                             builder: (BuildContext context) {
                               return DialogBox(
                                 buttonText: "UPDATE",
-                                titleController: _title,
-                                weatherSystemController: _weatherSystem,
-                                detailsController: _details,
-                                hazardsController: _hazards,
-                                precautionsController: _precautions,
-                                imageUrlController: _imageUrlController,
+                                titleController: title,
+                                weatherSystemController: weatherSystem,
+                                detailsController: details,
+                                hazardsController: hazards,
+                                precautionsController: precautions,
                                 pickImage: () async {
                                   final file =
                                       await ImagePickerWeb.getImageAsBytes();
@@ -162,11 +161,11 @@ class AdvisoryList extends StatelessWidget {
                                         .collection('advisory')
                                         .doc(documentId)
                                         .update({
-                                      'title': _title.text,
-                                      'weatherSystem': _weatherSystem.text,
-                                      'details': _details.text,
-                                      'hazards': _hazards.text,
-                                      'precautions': _precautions.text,
+                                      'title': title.text,
+                                      'weatherSystem': weatherSystem.text,
+                                      'details': details.text,
+                                      'hazards': hazards.text,
+                                      'precautions': precautions.text,
                                       'image': newImageUrl,
                                     });
 
@@ -204,6 +203,7 @@ class AdvisoryList extends StatelessWidget {
                                   Navigator.pop(context);
                                 },
                                 buttonText: 'OK',
+                                type: "advisory",
                               );
                             },
                           );

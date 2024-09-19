@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:resilientlinkweb/widgets/dialog_box.dart';
+import 'package:resilientlinkweb/widgets/donation_phase.dart';
 import 'package:resilientlinkweb/widgets/maps.dart';
 import 'package:resilientlinkweb/widgets/hoverText.dart';
+import 'package:resilientlinkweb/widgets/update_donation_drive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DonationList extends StatefulWidget {
@@ -14,8 +18,14 @@ class DonationList extends StatefulWidget {
 }
 
 class _DonationListState extends State<DonationList> {
+  final TextEditingController title = TextEditingController();
+  final TextEditingController proponent = TextEditingController();
+  final TextEditingController purpose = TextEditingController();
+  final TextEditingController itemsNeeded = TextEditingController();
+  String? selectedDonationDriveId;
   bool isError = false;
   String errorMessage = '';
+
   void start(String docId) async {
     try {
       final docSnapshot = await FirebaseFirestore.instance
@@ -34,6 +44,7 @@ class _DonationListState extends State<DonationList> {
 
         if (locationSnapshot.docs.isEmpty) {
           setState(() {
+            selectedDonationDriveId = docId;
             isError = true;
             errorMessage = 'Add Drop Off Points to Start';
           });
@@ -49,6 +60,7 @@ class _DonationListState extends State<DonationList> {
         'isStart': 1,
       });
       setState(() {
+        selectedDonationDriveId = docId;
         isError = false;
         errorMessage = '';
       });
@@ -94,57 +106,27 @@ class _DonationListState extends State<DonationList> {
                 ? DateFormat('MMMM dd, yyyy – hh:mm a').format(dateTime)
                 : 'Unknown date';
 
-            String label;
-            IconData icon;
-
-            bool isZero = false;
-            Color color = const Color(0xFF2E6930);
-            switch (donationDrive['isStart']) {
-              case 0:
-                label = "Start";
-                icon = Icons.play_arrow;
-                isZero = true;
-
-                break;
-              case 1:
-                label = "In Progress";
-                icon = Icons.hourglass_empty;
-                color = const Color(0xFF015490);
-                break;
-              case 2:
-                label = "Paused";
-                icon = Icons.pause;
-                color = const Color(0xFFFFB38A);
-                break;
-              case 3:
-                label = "Ended";
-                icon = Icons.stop;
-                color = const Color(0xFFEE6B6E);
-                break;
-              default:
-                label = "Unknown";
-                icon = Icons.help;
-            }
-
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  isError
-                      ? Container(
-                          height: 40,
-                          width: double.maxFinite,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: const Color(0xFFFF8F8F),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            errorMessage,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                  if (selectedDonationDriveId == documentSnapshot.id && isError)
+                    Container(
+                      height: 40,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF8F8F),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
                   const SizedBox(height: 10),
                   Container(
                     decoration: BoxDecoration(
@@ -186,28 +168,10 @@ class _DonationListState extends State<DonationList> {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            isZero
-                                ? IconButton(
-                                    onPressed: () => start(documentSnapshot.id),
-                                    icon: Icon(
-                                      icon,
-                                      color: color,
-                                    ),
-                                  )
-                                : IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      icon,
-                                      color: color,
-                                    ),
-                                  ),
-                            Text(
-                              label,
-                              style: TextStyle(fontSize: 16, color: color),
-                            ),
-                          ],
+                        DonationPhase(
+                          docId: documentSnapshot.id,
+                          start: start,
+                          isStart: donationDrive['isStart'],
                         )
                       ],
                     ),
@@ -266,12 +230,22 @@ class _DonationListState extends State<DonationList> {
                             donationDrive['purpose'],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            donationDrive['itemsNeeded'] ?? 'No Expectations',
-                          ),
-                        ),
+                        donationDrive['isAid']
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  donationDrive['itemsNeeded'] ??
+                                      'No Expectations',
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  'N/A',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              )
                       ]),
                       const TableRow(
                         children: [
@@ -297,17 +271,14 @@ class _DonationListState extends State<DonationList> {
                                 TextStyle(color: Colors.black.withOpacity(.5)),
                           ),
                         ),
-                        donationDrive['isAid']
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(
-                                  "Location: ",
-                                  style: TextStyle(
-                                      color: Colors.black.withOpacity(.5)),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            "Drop Off Points: ",
+                            style:
+                                TextStyle(color: Colors.black.withOpacity(.5)),
+                          ),
+                        ),
                       ]),
                       const TableRow(
                         children: [
@@ -385,27 +356,111 @@ class _DonationListState extends State<DonationList> {
                                     LocationList(
                                         donationId: documentSnapshot.id),
                                     const SizedBox(height: 10),
-                                    HoverText(
-                                      text: "Add drop-Off point",
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Maps(
-                                                documentSnapshot:
-                                                    documentSnapshot);
-                                          },
-                                        );
-                                      },
-                                      blue: true,
-                                    ),
+                                    donationDrive['isStart'] != 3
+                                        ? HoverText(
+                                            text: "Add drop-Off point",
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return Maps(
+                                                      documentSnapshot:
+                                                          documentSnapshot);
+                                                },
+                                              );
+                                              setState(() {
+                                                isError = false;
+                                              });
+                                            },
+                                            blue: true,
+                                          )
+                                        : const SizedBox.shrink(),
                                   ],
                                 ),
                               )
-                            : const SizedBox.shrink(),
+                            : const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  'N/A',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
                       ]),
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  donationDrive['isStart'] != 3
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                title.text = donationDrive['title'] ?? '';
+                                proponent.text =
+                                    donationDrive['proponent'] ?? '';
+                                purpose.text = donationDrive['purpose'] ?? '';
+                                itemsNeeded.text =
+                                    donationDrive['itemsNeeded'] ?? '';
+                                final TextEditingController imageUrlController =
+                                    TextEditingController(
+                                        text: donationDrive['image'] ?? '');
+
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return UpdateDonationDrive(
+                                        buttonText: 'Update',
+                                        titleController: title,
+                                        proponentController: proponent,
+                                        purposeController: purpose,
+                                        itemsNeededController: itemsNeeded,
+                                        imageUrlController: imageUrlController,
+                                        documentId: documentSnapshot.id,
+                                        initialIsAid: donationDrive['isAid'],
+                                        initialIsMonetary:
+                                            donationDrive['isMonetary'],
+                                      );
+                                    });
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 20,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return DialogBox(
+                                        onTap: () async {
+                                          final imageUrl =
+                                              donationDrive['image'];
+                                          if (imageUrl != null &&
+                                              imageUrl.isNotEmpty) {
+                                            final storageRef = FirebaseStorage
+                                                .instance
+                                                .refFromURL(imageUrl);
+
+                                            await storageRef.delete();
+                                          }
+                                          await FirebaseFirestore.instance
+                                              .collection('donation_drive')
+                                              .doc(documentSnapshot.id)
+                                              .delete();
+                                          Navigator.pop(context);
+                                        },
+                                        buttonText: 'OK',
+                                        type: "Donation Drive");
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.delete, size: 20),
+                            )
+                          ],
+                        )
+                      : const SizedBox.shrink(),
                   const Divider(),
                 ],
               ),

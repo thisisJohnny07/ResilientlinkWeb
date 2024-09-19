@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/output/advisorylist.dart';
+import 'package:resilientlinkweb/screens/sidenavigation.dart';
 import 'package:resilientlinkweb/widgets/advisory_textfield.dart';
 import 'package:resilientlinkweb/widgets/date_filter.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
@@ -137,10 +138,10 @@ class _AdvisoryState extends State<Advisory> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(
                         Icons.campaign,
@@ -157,21 +158,30 @@ class _AdvisoryState extends State<Advisory> {
                   ),
                   Row(
                     children: [
-                      Text(
-                        "Home",
-                        style: TextStyle(
-                            color: Color(0xFF015490),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SideNavigation()));
+                        },
+                        child: const Text(
+                          "Home",
+                          style: TextStyle(
+                              color: Color(0xFF015490),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                        ),
                       ),
-                      Text(
+                      const Text(
                         " / ",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "Manage Advisories",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
