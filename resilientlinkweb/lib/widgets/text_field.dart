@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextFieldInput extends StatelessWidget {
+class TextFieldInput extends StatefulWidget {
   final TextEditingController textEditingController;
   final bool isPass;
   final IconData icon;
@@ -13,15 +13,29 @@ class TextFieldInput extends StatelessWidget {
   });
 
   @override
+  _TextFieldInputState createState() => _TextFieldInputState();
+}
+
+class _TextFieldInputState extends State<TextFieldInput> {
+  bool _isObscured = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured =
+        widget.isPass; // Initialize the obscured state based on isPass
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
-        obscureText: isPass,
-        controller: textEditingController,
+        obscureText: widget.isPass ? _isObscured : false,
+        controller: widget.textEditingController,
         decoration: InputDecoration(
           prefixIcon: Icon(
-            icon,
+            widget.icon,
             color: const Color(0xFF015490),
           ),
           filled: true,
@@ -44,6 +58,19 @@ class TextFieldInput extends StatelessWidget {
               width: .8,
             ),
           ),
+          suffixIcon: widget.isPass
+              ? IconButton(
+                  icon: Icon(
+                    _isObscured ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isObscured = !_isObscured;
+                    });
+                  },
+                )
+              : null,
         ),
       ),
     );

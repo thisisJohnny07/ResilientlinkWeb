@@ -26,6 +26,13 @@ class HomePage extends StatelessWidget {
     return snapshot.size;
   }
 
+  Future<int> getStaffCount() async {
+    final CollectionReference staff =
+        FirebaseFirestore.instance.collection("staff");
+    QuerySnapshot snapshot = await staff.get();
+    return snapshot.size;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,11 +92,13 @@ class HomePage extends StatelessWidget {
                 getAdvisoryCount(),
                 getUserCount(),
                 getDonationDriveCount(),
+                getStaffCount(),
               ]).then((List<int> counts) {
                 return {
                   "advisoryCount": counts[0],
                   "userCount": counts[1],
                   "donationDriveCount": counts[2],
+                  "staffCount": counts[3],
                 };
               }),
               builder: (BuildContext context,
@@ -103,6 +112,7 @@ class HomePage extends StatelessWidget {
                   final userCount = snapshot.data?['userCount'] ?? 0;
                   final donationDriveCount =
                       snapshot.data?['donationDriveCount'] ?? 0;
+                  final staffCount = snapshot.data?['staffCount'] ?? 0;
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -124,8 +134,8 @@ class HomePage extends StatelessWidget {
                         icon: Icons.volunteer_activism,
                       ),
                       const SizedBox(width: 15),
-                      const DashboardStat(
-                        stat: '30',
+                      DashboardStat(
+                        stat: '$staffCount',
                         label: 'Registered Personnel',
                         icon: Icons.how_to_reg,
                       ),

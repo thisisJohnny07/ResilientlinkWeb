@@ -49,7 +49,7 @@ class _DialogBoxState extends State<DialogBox> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const Divider(),
-              Text("Are you sure you want to delete this ${widget.type}?"),
+              Text("Are you sure you want to remove this ${widget.type}?"),
               const Divider(),
               Row(
                 mainAxisAlignment:

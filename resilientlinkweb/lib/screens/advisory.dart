@@ -257,7 +257,7 @@ class _AdvisoryState extends State<Advisory> {
                   ),
                   const SizedBox(width: 24),
                   Container(
-                    width: 400,
+                    width: MediaQuery.of(context).size.width * 0.28,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [

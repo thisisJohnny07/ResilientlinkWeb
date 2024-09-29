@@ -428,36 +428,39 @@ class _DonationListState extends State<DonationList> {
                                 size: 20,
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return DialogBox(
-                                        onTap: () async {
-                                          final imageUrl =
-                                              donationDrive['image'];
-                                          if (imageUrl != null &&
-                                              imageUrl.isNotEmpty) {
-                                            final storageRef = FirebaseStorage
-                                                .instance
-                                                .refFromURL(imageUrl);
+                            donationDrive['isStart'] == 0
+                                ? IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return DialogBox(
+                                              onTap: () async {
+                                                final imageUrl =
+                                                    donationDrive['image'];
+                                                if (imageUrl != null &&
+                                                    imageUrl.isNotEmpty) {
+                                                  final storageRef =
+                                                      FirebaseStorage.instance
+                                                          .refFromURL(imageUrl);
 
-                                            await storageRef.delete();
-                                          }
-                                          await FirebaseFirestore.instance
-                                              .collection('donation_drive')
-                                              .doc(documentSnapshot.id)
-                                              .delete();
-                                          Navigator.pop(context);
+                                                  await storageRef.delete();
+                                                }
+                                                await FirebaseFirestore.instance
+                                                    .collection(
+                                                        'donation_drive')
+                                                    .doc(documentSnapshot.id)
+                                                    .delete();
+                                                Navigator.pop(context);
+                                              },
+                                              buttonText: 'OK',
+                                              type: "Donation Drive");
                                         },
-                                        buttonText: 'OK',
-                                        type: "Donation Drive");
-                                  },
-                                );
-                              },
-                              icon: const Icon(Icons.delete, size: 20),
-                            )
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete, size: 20),
+                                  )
+                                : const SizedBox.shrink(),
                           ],
                         )
                       : const SizedBox.shrink(),

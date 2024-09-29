@@ -115,6 +115,7 @@ class _MapsDialogState extends State<Maps> {
               width: double.maxFinite,
               height: 370,
               child: GoogleMap(
+                mapType: MapType.hybrid,
                 initialCameraPosition: const CameraPosition(
                   target: googlePlex,
                   zoom: 15,

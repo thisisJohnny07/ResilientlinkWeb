@@ -4,6 +4,8 @@ import 'package:resilientlinkweb/screens/dashboard.dart';
 import 'package:resilientlinkweb/screens/donation.dart';
 import 'package:resilientlinkweb/screens/messages.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
+import 'package:resilientlinkweb/screens/register_staff.dart';
+import 'package:resilientlinkweb/screens/statistics.dart';
 import 'package:resilientlinkweb/services/authentication.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
 import 'package:resilientlinkweb/widgets/profile_logout.dart';
@@ -23,8 +25,8 @@ class _SideNavigationState extends State<SideNavigation> {
     Donations(),
     Donations(),
     const Advisory(),
-    Donations(),
-    const Profile(),
+    const RegisterStaff(),
+    const Statistics(),
     const HomePage(),
   ];
 
@@ -130,7 +132,7 @@ class _SideNavigationState extends State<SideNavigation> {
                               _buildListTile(
                                   Icons.volunteer_activism, 'Donations', 1),
                               _buildListTile(Icons.campaign, 'Advisories', 2),
-                              _buildListTile(Icons.how_to_reg, 'Members', 3),
+                              _buildListTile(Icons.how_to_reg, 'Register', 3),
                               _buildListTile(
                                   Icons.insert_chart, 'Statistics', 4),
                               _buildListTile(Icons.feedback, 'Feedbacks', 5),

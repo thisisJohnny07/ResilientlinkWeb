@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:resilientlinkweb/widgets/donation_mov.dart';
 import 'package:resilientlinkweb/widgets/pop_menu.dart';
 
 class DonationPhase extends StatelessWidget {
@@ -47,7 +48,7 @@ class DonationPhase extends StatelessWidget {
             pause(docId);
           },
           v2: () {
-            end(docId);
+            end(context, docId);
           },
           offset: 20,
           child: Icon(
@@ -70,7 +71,7 @@ class DonationPhase extends StatelessWidget {
             resume(docId);
           },
           v2: () {
-            end(docId);
+            end(context, docId);
           },
           offset: 20,
           child: Icon(
@@ -147,16 +148,14 @@ class DonationPhase extends StatelessWidget {
     }
   }
 
-  void end(String docId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('donation_drive')
-          .doc(docId)
-          .update({
-        'isStart': 3,
-      });
-    } catch (e) {
-      print(e);
-    }
+  void end(BuildContext context, String docId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DonationMov(
+          docId: docId,
+        );
+      },
+    );
   }
 }
