@@ -22,7 +22,7 @@ class _SideNavigationState extends State<SideNavigation> {
   int _selectedIndex = 0;
 
   static final List<Widget> _pages = <Widget>[
-    Donations(),
+    const HomePage(),
     Donations(),
     const Advisory(),
     const RegisterStaff(),

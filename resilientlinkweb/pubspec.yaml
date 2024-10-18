@@ -52,6 +52,9 @@ dependencies:
   geocoding: ^3.0.0
   location: ^6.0.2
   flutter_spinkit: ^5.2.1
+  pdf: ^3.11.1
+  path_provider: ^2.1.4
+  printing: ^5.13.3
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +84,8 @@ flutter:
     - images/login.png
     - images/donation.png
     - images/pdrrmo.png
+    - images/southcotabato.png
+    - images/signature.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
