@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:resilientlinkweb/output/advisorylist.dart';
 import 'package:resilientlinkweb/screens/sidenavigation.dart';
 import 'package:resilientlinkweb/widgets/advisory_textfield.dart';
@@ -28,6 +29,7 @@ class _AdvisoryState extends State<Advisory> {
   bool dateFilter = true;
   final CollectionReference advisory =
       FirebaseFirestore.instance.collection("advisory");
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -67,10 +69,17 @@ class _AdvisoryState extends State<Advisory> {
     final hazards = _hazards.text;
     final precautions = _precautions.text;
 
+    setState(() {
+      _isLoading = true;
+    });
+
     if (title.isEmpty || details.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields.')),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
@@ -97,6 +106,14 @@ class _AdvisoryState extends State<Advisory> {
         );
         return;
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all required fields.')),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
     }
 
     try {
@@ -120,261 +137,283 @@ class _AdvisoryState extends State<Advisory> {
       setState(() {
         _pickedImage = null;
         _filename = 'No image selected';
+        _isLoading = false;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to add data: $e')),
       );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFf1f4f4),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(
-                        Icons.campaign,
-                        size: 30,
-                        color: Color(0xFF015490),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Manage Advisories",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SideNavigation()));
-                        },
-                        child: const Text(
-                          "Home",
-                          style: TextStyle(
-                              color: Color(0xFF015490),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                        ),
-                      ),
-                      const Text(
-                        " / ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const Text(
-                        "Manage Advisories",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 0.2,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.campaign,
+                            size: 30,
+                            color: Color(0xFF015490),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            "Manage Advisories",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SideNavigation()));
+                            },
+                            child: const Text(
+                              "Home",
+                              style: TextStyle(
+                                  color: Color(0xFF015490),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
+                            ),
+                          ),
+                          const Text(
+                            " / ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const Text(
+                            "Manage Advisories",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 0.2,
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Advisory List",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF015490),
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Advisory List",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF015490),
+                                      ),
+                                    ),
+                                    PopMenu(
+                                      text1: "Latest",
+                                      text2: "Oldest",
+                                      width: 70,
+                                      icon1: Icons.update,
+                                      icon2: Icons.history,
+                                      v1: () {
+                                        setState(() {
+                                          dateFilter = true;
+                                        });
+                                      },
+                                      v2: () {
+                                        setState(() {
+                                          dateFilter = false;
+                                        });
+                                      },
+                                      offset: 30,
+                                      child: const DateFilter(),
+                                    ),
+                                  ],
                                 ),
-                                PopMenu(
-                                  text1: "Latest",
-                                  text2: "Oldest",
-                                  width: 70,
-                                  icon1: Icons.update,
-                                  icon2: Icons.history,
-                                  v1: () {
-                                    setState(() {
-                                      dateFilter = true;
-                                    });
-                                  },
-                                  v2: () {
-                                    setState(() {
-                                      dateFilter = false;
-                                    });
-                                  },
-                                  offset: 30,
-                                  child: const DateFilter(),
+                                const Divider(),
+                                const SizedBox(height: 8),
+                                AdvisoryList(
+                                  dateFilter: dateFilter,
                                 ),
                               ],
                             ),
-                            const Divider(),
-                            const SizedBox(height: 8),
-                            AdvisoryList(
-                              dateFilter: dateFilter,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.28,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: .2,
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.28,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: .2,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Publish Advisory",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF015490),
-                            ),
-                          ),
-                          const Divider(),
-                          const SizedBox(height: 8),
-                          AdvisoryTextfield(
-                            textEditingController: _title,
-                            label: "Title *",
-                            line: 1,
-                          ),
-                          AdvisoryTextfield(
-                            textEditingController: _weatherSystem,
-                            label: "Weather System",
-                            line: 1,
-                          ),
-                          AdvisoryTextfield(
-                            textEditingController: _details,
-                            label: "Details *",
-                            line: 3,
-                          ),
-                          AdvisoryTextfield(
-                            textEditingController: _hazards,
-                            label: "Hazards",
-                            line: 2,
-                          ),
-                          AdvisoryTextfield(
-                            textEditingController: _precautions,
-                            label: "Precautions",
-                            line: 2,
-                          ),
-                          Text(
-                            "Image",
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black.withOpacity(0.7),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Center(
-                            child: GestureDetector(
-                              onTap: _pickImage,
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(5),
-                                  ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Publish Advisory",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF015490),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.cloud_upload,
-                                        size: 40,
-                                        color: const Color(0xFF015490)
-                                            .withOpacity(0.3),
+                              ),
+                              const Divider(),
+                              const SizedBox(height: 8),
+                              AdvisoryTextfield(
+                                textEditingController: _title,
+                                label: "Title *",
+                                line: 1,
+                              ),
+                              AdvisoryTextfield(
+                                textEditingController: _weatherSystem,
+                                label: "Weather System",
+                                line: 1,
+                              ),
+                              AdvisoryTextfield(
+                                textEditingController: _details,
+                                label: "Details *",
+                                line: 3,
+                              ),
+                              AdvisoryTextfield(
+                                textEditingController: _hazards,
+                                label: "Hazards",
+                                line: 2,
+                              ),
+                              AdvisoryTextfield(
+                                textEditingController: _precautions,
+                                label: "Precautions",
+                                line: 2,
+                              ),
+                              Text(
+                                "Image",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black.withOpacity(0.7),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Center(
+                                child: GestureDetector(
+                                  onTap: _pickImage,
+                                  child: Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
                                       ),
-                                      Text(
-                                        "Upload a File",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black.withOpacity(0.7),
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(5),
                                       ),
-                                      Text(
-                                        _filename,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black.withOpacity(0.7),
-                                        ),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.cloud_upload,
+                                            size: 40,
+                                            color: const Color(0xFF015490)
+                                                .withOpacity(0.3),
+                                          ),
+                                          Text(
+                                            "Upload a File",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            _filename,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              const SizedBox(height: 10),
+                              MyButton(
+                                onTab: _submitData,
+                                text: "Publish",
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          MyButton(
-                            onTab: _submitData,
-                            text: "Publish",
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5), // Dark background overlay
+              child: const Center(
+                child: SpinKitFadingCube(
+                  color: Color(0xFF015490),
+                  size: 50.0,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

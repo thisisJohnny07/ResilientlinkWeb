@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:resilientlinkweb/screens/advisory.dart';
 import 'package:resilientlinkweb/screens/dashboard.dart';
 import 'package:resilientlinkweb/screens/donation.dart';
+import 'package:resilientlinkweb/screens/feedbacks.dart';
 import 'package:resilientlinkweb/screens/messages.dart';
 import 'package:resilientlinkweb/screens/profile.dart';
 import 'package:resilientlinkweb/screens/register_staff.dart';
@@ -27,7 +28,7 @@ class _SideNavigationState extends State<SideNavigation> {
     const Advisory(),
     const RegisterStaff(),
     const Statistics(),
-    const HomePage(),
+    const Feedbacks(),
   ];
 
   @override
@@ -135,7 +136,7 @@ class _SideNavigationState extends State<SideNavigation> {
                               _buildListTile(Icons.how_to_reg, 'Register', 3),
                               _buildListTile(
                                   Icons.insert_chart, 'Statistics', 4),
-                              _buildListTile(Icons.feedback, 'Feedbacks', 5),
+                              _buildListTile(Icons.chat, 'Feedbacks', 5),
                             ],
                           ),
                         ),

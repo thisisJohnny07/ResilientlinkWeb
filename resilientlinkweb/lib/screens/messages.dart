@@ -4,7 +4,7 @@ import 'package:resilientlinkweb/services/chat_service.dart';
 import 'package:resilientlinkweb/widgets/top_navigation.dart';
 
 class Messages extends StatefulWidget {
-  Messages({super.key});
+  const Messages({super.key});
 
   @override
   _MessagesState createState() => _MessagesState();
