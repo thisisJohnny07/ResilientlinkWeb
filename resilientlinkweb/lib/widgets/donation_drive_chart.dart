@@ -10,8 +10,7 @@ class DonationDriveChart extends StatefulWidget {
 }
 
 class _DonationDriveChartState extends State<DonationDriveChart> {
-  List<int> donationCounts =
-      List.filled(4, 0); // Change to 4 for the new phases
+  List<int> donationCounts = List.filled(4, 0);
   int totalDonation = 0;
 
   @override

@@ -55,7 +55,7 @@ class _FeedbacksState extends State<Feedbacks> {
                   const Row(
                     children: [
                       Icon(
-                        Icons.message,
+                        Icons.reviews,
                         size: 30,
                         color: Color(0xFF015490),
                       ),

@@ -87,6 +87,9 @@ flutter:
     - images/pdrrmo.png
     - images/southcotabato.png
     - images/signature.png
+    - images/gcash.png
+    - images/maya.jpg
+    - images/card.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

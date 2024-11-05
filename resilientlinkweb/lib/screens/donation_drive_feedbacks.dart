@@ -17,7 +17,6 @@ class _DonationDriveFeedbacksState extends State<DonationDriveFeedbacks> {
   Map<String, String> donorNames = {}; // Map to hold donor names
   bool isLoading = true;
   String? errorMessage;
-  // To store the fetched donation data
   Map<String, dynamic>? donationDrive;
 
   @override
@@ -117,7 +116,7 @@ class _DonationDriveFeedbacksState extends State<DonationDriveFeedbacks> {
                           child: Row(
                             children: [
                               const Icon(
-                                Icons.volunteer_activism,
+                                Icons.reviews,
                                 size: 30,
                                 color: Color(0xFF015490),
                               ),

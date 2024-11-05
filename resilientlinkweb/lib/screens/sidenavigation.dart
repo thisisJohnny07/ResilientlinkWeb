@@ -134,9 +134,8 @@ class _SideNavigationState extends State<SideNavigation> {
                                   Icons.volunteer_activism, 'Donations', 1),
                               _buildListTile(Icons.campaign, 'Advisories', 2),
                               _buildListTile(Icons.how_to_reg, 'Register', 3),
-                              _buildListTile(
-                                  Icons.insert_chart, 'Statistics', 4),
-                              _buildListTile(Icons.chat, 'Feedbacks', 5),
+                              _buildListTile(Icons.bar_chart, 'Statistics', 4),
+                              _buildListTile(Icons.reviews, 'Feedbacks', 5),
                             ],
                           ),
                         ),

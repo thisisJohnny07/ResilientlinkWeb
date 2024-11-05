@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:resilientlinkweb/screens/sidenavigation.dart';
 import 'package:resilientlinkweb/services/authentication.dart';
 import 'package:resilientlinkweb/widgets/button.dart';
@@ -27,19 +28,22 @@ class _LoginState extends State<Login> {
   }
 
   void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
     String res = await AuntServices().loginUser(
       email: emailController.text,
       password: passwordController.text,
     );
     if (res == "success") {
-      setState(() {
-        isLoading = true;
-      });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const SideNavigation(),
         ),
       );
+      setState(() {
+        isLoading = false;
+      });
     } else {
       setState(() {
         isLoading = false;
@@ -57,135 +61,151 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F8FF),
-      body: Center(
-        child: Container(
-          width: 800,
-          height: 500,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                spreadRadius: 2,
-                offset: const Offset(2, 4), // Subtle offset for a formal look
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 400,
-                height: 500,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(6.0),
-                      bottomLeft: Radius.circular(6.0)),
-                  child: Image.asset(
-                    "images/login.png",
-                    fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Center(
+            child: Container(
+              width: 800,
+              height: 500,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                    offset:
+                        const Offset(2, 4), // Subtle offset for a formal look
                   ),
-                ),
+                ],
               ),
-              SizedBox(
-                width: 400,
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.network(
-                        "images/logo.png",
-                        height: 60,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 400,
+                    height: 500,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(6.0),
+                          bottomLeft: Radius.circular(6.0)),
+                      child: Image.asset(
+                        "images/login.png",
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        "Welcome Back!",
-                        style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff011222)),
-                      ),
-                      const Text(
-                        "Please login with your personal information",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color.fromARGB(255, 160, 160, 160),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        "Email *",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      TextFieldInput(
-                          textEditingController: emailController,
-                          icon: Icons.email),
-                      const Text(
-                        "Password *",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      TextFieldInput(
-                        isPass: true,
-                        textEditingController: passwordController,
-                        icon: Icons.lock,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 400,
+                    child: Padding(
+                      padding: const EdgeInsets.all(40.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Image.network(
+                            "images/logo.png",
+                            height: 60,
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Welcome Back!",
+                            style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff011222)),
+                          ),
+                          const Text(
+                            "Please login with your personal information",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color.fromARGB(255, 160, 160, 160),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Email *",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          TextFieldInput(
+                              textEditingController: emailController,
+                              icon: Icons.email),
+                          const Text(
+                            "Password *",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          TextFieldInput(
+                            isPass: true,
+                            textEditingController: passwordController,
+                            icon: Icons.lock,
+                          ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Transform.scale(
-                                scale: 0.8,
-                                child: Checkbox(
-                                  value: rememberMe,
-                                  onChanged: (value) => setState(
-                                      () => rememberMe = value ?? false),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(3.0),
+                              Row(
+                                children: [
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Checkbox(
+                                      value: rememberMe,
+                                      onChanged: (value) => setState(
+                                          () => rememberMe = value ?? false),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(3.0),
+                                      ),
+                                      side: BorderSide(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        width: 1.0,
+                                      ),
+                                      activeColor: const Color(0xFF015490),
+                                      checkColor: Colors.white,
+                                    ),
                                   ),
-                                  side: BorderSide(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    width: 1.0,
+                                  const Text(
+                                    "Remember Me",
+                                    style: TextStyle(fontSize: 12),
                                   ),
-                                  activeColor: const Color(0xFF015490),
-                                  checkColor: Colors.white,
-                                ),
+                                ],
                               ),
-                              const Text(
-                                "Remember Me",
-                                style: TextStyle(fontSize: 12),
+                              TextButton(
+                                onPressed: forgotPassword,
+                                child: const Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color.fromARGB(255, 49, 49, 49),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                          TextButton(
-                            onPressed: forgotPassword,
-                            child: const Text(
-                              "Forgot Password?",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color.fromARGB(255, 49, 49, 49),
-                              ),
-                            ),
+                          MyButton(
+                            onTab: loginUser,
+                            text: "LOG IN",
                           ),
                         ],
                       ),
-                      MyButton(
-                        onTab: loginUser,
-                        text: "LOG IN",
-                      ),
-                    ],
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ),
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.8), // Dark background overlay
+              child: const Center(
+                child: SpinKitFadingCube(
+                  color: Color(0xFF015490),
+                  size: 50.0,
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }

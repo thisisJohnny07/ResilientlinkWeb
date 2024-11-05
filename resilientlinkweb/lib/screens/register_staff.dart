@@ -14,9 +14,10 @@ class RegisterStaff extends StatefulWidget {
 }
 
 class _RegisterStaffState extends State<RegisterStaff> {
-  final TextEditingController _name = TextEditingController();
+  final TextEditingController _firstName = TextEditingController();
+  final TextEditingController _lastName = TextEditingController();
   int currentPage = 0;
-  int rowsPerPage = 10; // Set default to 10 rows per page
+  int rowsPerPage = 10;
   bool isUpdating = false;
   DocumentSnapshot? editingStaff;
   final CollectionReference staff =
@@ -26,13 +27,14 @@ class _RegisterStaffState extends State<RegisterStaff> {
   Future<List<Map<String, dynamic>>> _fetchStaff() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('staff')
-        .orderBy('name')
+        .orderBy('lastName')
         .get();
 
     return querySnapshot.docs.map((doc) {
       return {
         'id': doc.id,
-        'name': doc['name'],
+        'firstName': doc['firstName'],
+        'lastName': doc['lastName'],
       };
     }).toList();
   }
@@ -41,9 +43,10 @@ class _RegisterStaffState extends State<RegisterStaff> {
     setState(() {
       _isLoading = true;
     });
-    final name = _name.text;
+    final firstName = _firstName.text;
+    final lastName = _lastName.text;
 
-    if (name.isEmpty) {
+    if (firstName.isEmpty && lastName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields.')),
       );
@@ -57,24 +60,28 @@ class _RegisterStaffState extends State<RegisterStaff> {
       if (isUpdating && editingStaff != null) {
         // Update the existing document
         await staff.doc(editingStaff!.id).update({
-          'name': name,
+          'firstName': firstName,
+          'lastName': lastName,
         });
 
         setState(() {
           isUpdating = false;
           editingStaff = null;
-          _name.clear();
+          _firstName.clear();
+          _lastName.clear();
           _isLoading = false;
         });
       } else {
         // Add new staff
         await staff.add({
-          'name': name,
+          'firstName': firstName,
+          'lastName': lastName,
           'timestamp': FieldValue.serverTimestamp(),
         });
 
         setState(() {
-          _name.clear();
+          _firstName.clear();
+          _lastName.clear();
           _isLoading = false;
         });
       }
@@ -305,7 +312,10 @@ class _RegisterStaffState extends State<RegisterStaff> {
                                               cells: [
                                                 DataCell(Text('$rowIndex')),
                                                 DataCell(Text(staff['id']!)),
-                                                DataCell(Text(staff['name']!)),
+                                                DataCell(Text(
+                                                    staff['firstName']! +
+                                                        " " +
+                                                        staff['lastName']!)),
                                                 DataCell(
                                                   Row(
                                                     children: [
@@ -323,8 +333,12 @@ class _RegisterStaffState extends State<RegisterStaff> {
                                                                   .get();
 
                                                           setState(() {
-                                                            _name.text =
-                                                                staff["name"];
+                                                            _firstName.text =
+                                                                staff[
+                                                                    "firstName"];
+                                                            _lastName.text =
+                                                                staff[
+                                                                    "lastName"];
                                                             editingStaff = doc;
                                                             isUpdating = true;
                                                           });
@@ -334,6 +348,10 @@ class _RegisterStaffState extends State<RegisterStaff> {
                                                         icon: const Icon(
                                                             Icons.delete),
                                                         onPressed: () async {
+                                                          setState(() {
+                                                            _firstName.clear();
+                                                            _lastName.clear();
+                                                          });
                                                           await showDialog(
                                                             context: context,
                                                             builder:
@@ -349,6 +367,7 @@ class _RegisterStaffState extends State<RegisterStaff> {
                                                                         .doc(staff[
                                                                             'id'])
                                                                         .delete();
+
                                                                     Navigator.pop(
                                                                         context);
                                                                   },
@@ -482,8 +501,13 @@ class _RegisterStaffState extends State<RegisterStaff> {
                             const Divider(),
                             const SizedBox(height: 8),
                             AdvisoryTextfield(
-                              textEditingController: _name,
-                              label: "Name *",
+                              textEditingController: _firstName,
+                              label: "First Name *",
+                              line: 1,
+                            ),
+                            AdvisoryTextfield(
+                              textEditingController: _lastName,
+                              label: "Last Name *",
                               line: 1,
                             ),
                             const SizedBox(height: 10),
