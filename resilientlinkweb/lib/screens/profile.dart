@@ -86,16 +86,18 @@ class _ProfileState extends State<Profile> {
                         width: MediaQuery.of(context).size.width * 1,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Image.asset(
-                              "images/pdrrmo.png",
-                              height: 80,
-                            ),
-                            const SizedBox(width: 20),
-                            Column(
+                            Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
+                                Image.asset(
+                                  "images/pdrrmo.png",
+                                  height: 80,
+                                ),
+                                const SizedBox(width: 20),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       admin?['name'],
@@ -103,71 +105,60 @@ class _ProfileState extends State<Profile> {
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    const SizedBox(width: 130),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF015490),
-                                          foregroundColor: Colors.white),
-                                      onPressed: () async {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              nameController.text =
-                                                  admin?['name'];
-                                              addressController.text =
-                                                  admin?['address'];
-                                              facebookLinkController.text =
-                                                  admin?['facebookLink'];
-                                              facebookNameController.text =
-                                                  admin?['facebookName'];
-                                              websiteController.text =
-                                                  admin?['website'];
-                                              globeController.text =
-                                                  admin?['globe'];
-                                              smartController.text =
-                                                  admin?['smart'];
-                                              phoneController.text =
-                                                  admin?['phone'];
-                                              return UpdateProfile(
-                                                nameController: nameController,
-                                                addressController:
-                                                    addressController,
-                                                facebookLinkController:
-                                                    facebookLinkController,
-                                                facebookNameController:
-                                                    facebookNameController,
-                                                websiteController:
-                                                    websiteController,
-                                                globeController:
-                                                    globeController,
-                                                smartController:
-                                                    smartController,
-                                                phoneController:
-                                                    phoneController,
-                                                adminId: user!.uid,
-                                              );
-                                            });
-                                      },
-                                      child: const Text("Edit Profile"),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: Colors.black54,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      admin?['address'],
-                                      style: const TextStyle(fontSize: 16),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on,
+                                          color: Colors.black54,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          admin?['address'],
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ],
                             ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF015490),
+                                  foregroundColor: Colors.white),
+                              onPressed: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      nameController.text = admin?['name'];
+                                      addressController.text =
+                                          admin?['address'];
+                                      facebookLinkController.text =
+                                          admin?['facebookLink'];
+                                      facebookNameController.text =
+                                          admin?['facebookName'];
+                                      websiteController.text =
+                                          admin?['website'];
+                                      globeController.text = admin?['globe'];
+                                      smartController.text = admin?['smart'];
+                                      phoneController.text = admin?['phone'];
+                                      return UpdateProfile(
+                                        nameController: nameController,
+                                        addressController: addressController,
+                                        facebookLinkController:
+                                            facebookLinkController,
+                                        facebookNameController:
+                                            facebookNameController,
+                                        websiteController: websiteController,
+                                        globeController: globeController,
+                                        smartController: smartController,
+                                        phoneController: phoneController,
+                                        adminId: user!.uid,
+                                      );
+                                    });
+                              },
+                              child: const Text("Edit Profile"),
+                            )
                           ],
                         ),
                       ),

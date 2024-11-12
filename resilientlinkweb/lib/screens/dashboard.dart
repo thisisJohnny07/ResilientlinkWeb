@@ -158,6 +158,14 @@ class HomePage extends StatelessWidget {
                   SizedBox(width: 20),
                   OverallRatings(),
                 ],
+              ),
+              const SizedBox(height: 40),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "© 2024 ResilientLink. All rights reserved.",
+                  style: TextStyle(color: Colors.black54),
+                ),
               )
             ],
           ),

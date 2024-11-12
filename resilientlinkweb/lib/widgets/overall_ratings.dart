@@ -116,7 +116,7 @@ class _OverallRatingsState extends State<OverallRatings> {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(10),
-            width: 250,
+            width: 260,
             height: 180,
             child: BarChart(
               BarChartData(

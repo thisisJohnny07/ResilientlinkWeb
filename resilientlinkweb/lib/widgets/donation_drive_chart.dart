@@ -85,7 +85,7 @@ class _DonationDriveChartState extends State<DonationDriveChart> {
           const SizedBox(height: 30),
           Container(
             padding: const EdgeInsets.all(10),
-            width: 250,
+            width: 260,
             height: 80,
             child: PieChart(
               PieChartData(

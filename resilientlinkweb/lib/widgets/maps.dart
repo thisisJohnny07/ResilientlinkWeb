@@ -113,7 +113,7 @@ class _MapsDialogState extends State<Maps> {
             LocationList(donationId: widget.documentSnapshot.id),
             SizedBox(
               width: double.maxFinite,
-              height: 370,
+              height: 430,
               child: GoogleMap(
                 mapType: MapType.hybrid,
                 initialCameraPosition: const CameraPosition(

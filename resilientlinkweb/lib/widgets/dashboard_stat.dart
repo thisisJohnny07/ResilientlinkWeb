@@ -39,7 +39,7 @@ class DashboardStat extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize: 30,
+                    fontSize: 40,
                   ),
                 ),
                 Text(

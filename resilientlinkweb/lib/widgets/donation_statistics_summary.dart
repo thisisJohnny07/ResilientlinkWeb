@@ -181,7 +181,7 @@ class _DonationStatisticsSummaryState extends State<DonationStatisticsSummary> {
               ),
             ],
           ),
-          const SizedBox(width: 70),
+          const SizedBox(width: 100),
           Container(
             color: Colors.black12,
             child: const SizedBox(
@@ -189,7 +189,7 @@ class _DonationStatisticsSummaryState extends State<DonationStatisticsSummary> {
               width: 1,
             ),
           ),
-          const SizedBox(width: 70),
+          const SizedBox(width: 100),
           Column(
             children: [
               const Text(
@@ -267,7 +267,7 @@ class _DonationStatisticsSummaryState extends State<DonationStatisticsSummary> {
               ),
             ],
           ),
-          const SizedBox(width: 70),
+          const SizedBox(width: 100),
           Container(
             color: Colors.black12,
             child: const SizedBox(
@@ -275,7 +275,7 @@ class _DonationStatisticsSummaryState extends State<DonationStatisticsSummary> {
               width: 1,
             ),
           ),
-          const SizedBox(width: 70),
+          const SizedBox(width: 100),
           Column(
             children: [
               const Text(

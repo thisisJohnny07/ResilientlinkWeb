@@ -402,6 +402,14 @@ class _FeedbacksState extends State<Feedbacks> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    "© 2024 ResilientLink. All rights reserved.",
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                )
               ],
             ),
           ],

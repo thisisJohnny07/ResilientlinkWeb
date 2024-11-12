@@ -143,7 +143,7 @@ class _StatisticsState extends State<Statistics> {
                           ),
                         ),
                         SizedBox(
-                          width: 300,
+                          width: 400,
                           child: TextField(
                             controller: _searchController,
                             onChanged: (value) {
@@ -257,7 +257,7 @@ class _StatisticsState extends State<Statistics> {
                                     statisticsList[index]['totalAmount'] ?? 0.0;
 
                                 return Container(
-                                  width: 251,
+                                  width: 293,
                                   height: 270,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
@@ -281,7 +281,7 @@ class _StatisticsState extends State<Statistics> {
                                         ),
                                         child: Image.asset(
                                           "images/donation.png",
-                                          width: 251,
+                                          width: 293,
                                           height: 100,
                                           fit: BoxFit.cover,
                                         ),
@@ -404,6 +404,14 @@ class _StatisticsState extends State<Statistics> {
                   ],
                 ),
               ),
+              const SizedBox(height: 40),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "© 2024 ResilientLink. All rights reserved.",
+                  style: TextStyle(color: Colors.black54),
+                ),
+              )
             ],
           ),
         ),

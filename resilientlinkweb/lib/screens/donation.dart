@@ -136,6 +136,14 @@ class _DonationsState extends State<Donations> {
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 40),
+              const Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "© 2024 ResilientLink. All rights reserved.",
+                  style: TextStyle(color: Colors.black54),
+                ),
               )
             ],
           ),
