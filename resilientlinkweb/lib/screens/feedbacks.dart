@@ -17,19 +17,46 @@ class _FeedbacksState extends State<Feedbacks> {
 
   Future<List<Map<String, dynamic>>> _fetchDonationDrives() async {
     try {
+      // Step 1: Fetch donation drives
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('donation_drive')
-          .orderBy('timestamp') // Consider ordering before filtering
+          .orderBy('timestamp') // Ensure ordering before filtering
           .get();
 
+      // Map the documents into a list of donation drives
       List<Map<String, dynamic>> donationList = snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
+        data['id'] = doc.id; // Add document ID to the data
         return data;
       }).toList();
 
-      donationList =
-          donationList.where((donation) => donation['isStart'] == 3).toList();
+      // Filter donation drives by 'isStart' field
+      List<String> filteredDonationDriveIds = donationList
+          .where((donation) => donation['isStart'] == 3)
+          .map((donation) => donation['id'] as String)
+          .toList();
+
+      if (filteredDonationDriveIds.isEmpty) {
+        // No matching donation drives, return an empty list
+        return [];
+      }
+
+      // Step 2: Fetch ratings for filtered donation drives
+      QuerySnapshot ratingsSnapshot = await FirebaseFirestore.instance
+          .collection('ratings')
+          .where('donationDriveId', whereIn: filteredDonationDriveIds)
+          .get();
+
+      // Extract donationDriveIds from ratings
+      List<String> ratedDonationDriveIds = ratingsSnapshot.docs
+          .map((doc) =>
+              (doc.data() as Map<String, dynamic>)['donationDriveId'] as String)
+          .toList();
+
+      // Step 3: Filter donationList based on ratings
+      donationList = donationList
+          .where((donation) => ratedDonationDriveIds.contains(donation['id']))
+          .toList();
 
       return donationList;
     } catch (e) {
@@ -217,6 +244,8 @@ class _FeedbacksState extends State<Feedbacks> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 DataTable(
+                                  dataRowMinHeight: 50,
+                                  dataRowMaxHeight: 100,
                                   columns: const [
                                     DataColumn(
                                         label: Text(
@@ -244,7 +273,7 @@ class _FeedbacksState extends State<Feedbacks> {
                                     )),
                                     DataColumn(
                                         label: Text(
-                                      'Proponent',
+                                      'Beneficiaries',
                                       style: TextStyle(
                                         color: Color(0xFF015490),
                                         fontWeight: FontWeight.bold,
@@ -267,14 +296,14 @@ class _FeedbacksState extends State<Feedbacks> {
                                     return DataRow(
                                       cells: [
                                         DataCell(
-                                          Container(
+                                          SizedBox(
                                             width:
                                                 20, // Set specific width for the index column
                                             child: Text('$rowIndex'),
                                           ),
                                         ),
                                         DataCell(
-                                          Container(
+                                          SizedBox(
                                             width:
                                                 200, // Set specific width for the title column
                                             child:
@@ -282,7 +311,7 @@ class _FeedbacksState extends State<Feedbacks> {
                                           ),
                                         ),
                                         DataCell(
-                                          Container(
+                                          SizedBox(
                                             width:
                                                 250, // Set specific width for the purpose column
                                             child:
@@ -290,7 +319,7 @@ class _FeedbacksState extends State<Feedbacks> {
                                           ),
                                         ),
                                         DataCell(
-                                          Container(
+                                          SizedBox(
                                             width:
                                                 180, // Set specific width for the proponent column
                                             child: Text(
@@ -298,7 +327,7 @@ class _FeedbacksState extends State<Feedbacks> {
                                           ),
                                         ),
                                         DataCell(
-                                          Container(
+                                          SizedBox(
                                             width: 100,
                                             height: 30,
                                             child: ElevatedButton(
@@ -409,7 +438,8 @@ class _FeedbacksState extends State<Feedbacks> {
                     "© 2024 ResilientLink. All rights reserved.",
                     style: TextStyle(color: Colors.black54),
                   ),
-                )
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ],

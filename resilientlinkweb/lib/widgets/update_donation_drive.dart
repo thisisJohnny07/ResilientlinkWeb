@@ -83,7 +83,7 @@ class _UpdateDonationDriveState extends State<UpdateDonationDrive> {
                   ),
                   AdvisoryTextfield(
                     textEditingController: widget.proponentController,
-                    label: 'Proponent',
+                    label: 'Beneficiaries',
                     line: 1,
                   ),
                   AdvisoryTextfield(

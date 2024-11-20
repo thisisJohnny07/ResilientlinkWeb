@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class FeedbackSummary extends StatefulWidget {
   final String? donationDriveId;
+
   const FeedbackSummary({super.key, this.donationDriveId});
 
   @override
@@ -27,8 +28,9 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
       // Initialize an empty Query
       Query query = FirebaseFirestore.instance.collection('ratings');
 
-      // If donationDriveId is provided, apply the filter
-      if (widget.donationDriveId != null) {
+      // If donationDriveId is provided and non-empty, apply the filter
+      if (widget.donationDriveId != null &&
+          widget.donationDriveId!.isNotEmpty) {
         query =
             query.where('donationDriveId', isEqualTo: widget.donationDriveId);
       }
@@ -144,7 +146,9 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
                   Text(
                     averageRating.toStringAsFixed(1), // Show one decimal place
                     style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Row(
@@ -157,8 +161,7 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
                                 Colors.grey.shade300, // Base empty star color
                             size: 18,
                           ),
-                          if (averageRating >
-                              index) // Check if this star should be filled or partially filled
+                          if (averageRating > index)
                             ClipRect(
                               clipper: _StarClipper(averageRating - index),
                               child: const Icon(
@@ -223,8 +226,7 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
                             ),
                           );
                         }
-                        return const SizedBox
-                            .shrink(); // Do not display anything if conditions are not met
+                        return const SizedBox.shrink();
                       },
                     ),
                   ),
@@ -240,18 +242,16 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
                       showTitles: true,
                       reservedSize: 40,
                       getTitlesWidget: (value, meta) {
-                        // Set Y-axis labels with improved styling
                         String label = value.toInt().toString();
                         return SideTitleWidget(
                           axisSide: meta.axisSide,
-                          space: 10, // Space between the label and the axis
+                          space: 10,
                           child: Text(
                             label,
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color:
-                                  Color(0xFF015490), // Change color as needed
+                              color: Color(0xFF015490),
                             ),
                           ),
                         );
@@ -262,13 +262,12 @@ class _FeedbackSummaryState extends State<FeedbackSummary> {
                 borderData: FlBorderData(show: false),
                 barGroups: List.generate(5, (index) {
                   return BarChartGroupData(
-                    x: index, // Position of the bar
+                    x: index,
                     barRods: [
                       BarChartRodData(
-                        toY:
-                            ratingCounts[index].toDouble(), // Height of the bar
+                        toY: ratingCounts[index].toDouble(),
                         color: const Color(0xFF015490),
-                        width: 8, // You can adjust the width as needed
+                        width: 8,
                       ),
                     ],
                   );
@@ -289,7 +288,6 @@ class _StarClipper extends CustomClipper<Rect> {
 
   @override
   Rect getClip(Size size) {
-    // Calculate the width based on the fill level
     return Rect.fromLTWH(
         0, 0, size.width * fillLevel.clamp(0.0, 1.0), size.height);
   }

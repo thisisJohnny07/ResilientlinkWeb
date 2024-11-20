@@ -46,6 +46,11 @@ class _StatisticsState extends State<Statistics> {
     };
   }
 
+  String formattedTotalAmount(int totalAmount) {
+    final formatter = NumberFormat('#,##0');
+    return '₱${formatter.format(totalAmount)}.0';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,7 +263,7 @@ class _StatisticsState extends State<Statistics> {
 
                                 return Container(
                                   width: 293,
-                                  height: 270,
+                                  height: 275,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(8),
@@ -350,7 +355,8 @@ class _StatisticsState extends State<Statistics> {
                                                     const SizedBox(width: 5),
                                                     donationDrive['isMonetary']
                                                         ? Text(
-                                                            "₱${totalAmount.toStringAsFixed(2)}",
+                                                            formattedTotalAmount(
+                                                                totalAmount),
                                                           )
                                                         : const Text("-"),
                                                   ],

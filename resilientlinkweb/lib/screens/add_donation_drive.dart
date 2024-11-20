@@ -175,188 +175,201 @@ class _AddDonationDriveState extends State<AddDonationDrive> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Center(
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 1000),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 0.2,
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        message,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                _isFilled ? Colors.black : Colors.red.shade500),
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AdvisoryTextfield(
-                              textEditingController: _title,
-                              label: 'Title *',
-                              line: 1,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: AdvisoryTextfield(
-                              textEditingController: _proponent,
-                              label: 'Proponent *',
-                              line: 1,
-                            ),
+                child: Column(
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 1000),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 0.2,
                           ),
                         ],
                       ),
-                      Text(
-                        "Inclusion *",
-                        style: TextStyle(
-                          color: Colors.black.withOpacity(0.7),
-                          fontSize: 13,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          CheckboxInput(
-                            label: 'Monetary',
-                            initialValue: _isMonetary,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isMonetary = value ?? false;
-                                _updateIsMonetary(_isMonetary);
-                              });
-                            },
-                          ),
-                          CheckboxInput(
-                            label: 'Aid/Relief',
-                            initialValue: _isAid,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _isAid = value ?? false;
-                                _updateIsAid(_isAid);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(
-                            child: AdvisoryTextfield(
-                              textEditingController: _purpose,
-                              label: 'Purpose *',
-                              line: 3,
+                          Text(
+                            message,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: _isFilled
+                                    ? Colors.black
+                                    : Colors.red.shade500),
+                          ),
+                          const Divider(),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AdvisoryTextfield(
+                                  textEditingController: _title,
+                                  label: 'Title *',
+                                  line: 1,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: AdvisoryTextfield(
+                                  textEditingController: _proponent,
+                                  label: 'Beneficiaries *',
+                                  line: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Inclusion *",
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.7),
+                              fontSize: 13,
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: AdvisoryTextfield(
-                              textEditingController: _itemsNeeded,
-                              label: 'Items Needed *',
-                              line: 3,
-                              readOnly: _isAid ? false : true,
+                          Row(
+                            children: [
+                              CheckboxInput(
+                                label: 'Monetary',
+                                initialValue: _isMonetary,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _isMonetary = value ?? false;
+                                    _updateIsMonetary(_isMonetary);
+                                  });
+                                },
+                              ),
+                              CheckboxInput(
+                                label: 'Aid/Relief',
+                                initialValue: _isAid,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _isAid = value ?? false;
+                                    _updateIsAid(_isAid);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: AdvisoryTextfield(
+                                  textEditingController: _purpose,
+                                  label: 'Purpose *',
+                                  line: 3,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: AdvisoryTextfield(
+                                  textEditingController: _itemsNeeded,
+                                  label: 'Items Needed *',
+                                  line: 3,
+                                  readOnly: _isAid ? false : true,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Image *",
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.7),
+                              fontSize: 13,
                             ),
+                          ),
+                          GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.305,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 1,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(5),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.cloud_upload,
+                                      size: 40,
+                                      color: const Color(0xFF015490)
+                                          .withOpacity(0.3),
+                                    ),
+                                    Text(
+                                      "Upload a File",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black.withOpacity(0.7),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      _filename,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black.withOpacity(0.7),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          const Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.black,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                ),
+                                child: const Text("Cancel"),
+                              ),
+                              const SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: _submitData,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF015490),
+                                  foregroundColor: Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                ),
+                                child: const Text("Create"),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Text(
-                        "Image *",
-                        style: TextStyle(
-                          color: Colors.black.withOpacity(0.7),
-                          fontSize: 13,
-                        ),
+                    ),
+                    const SizedBox(height: 40),
+                    const Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        "© 2024 ResilientLink. All rights reserved.",
+                        style: TextStyle(color: Colors.black54),
                       ),
-                      GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.341,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.cloud_upload,
-                                  size: 40,
-                                  color:
-                                      const Color(0xFF015490).withOpacity(0.3),
-                                ),
-                                Text(
-                                  "Upload a File",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black.withOpacity(0.7),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _filename,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black.withOpacity(0.7),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            child: const Text("Cancel"),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: _submitData,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF015490),
-                              foregroundColor: Colors.white,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.zero,
-                              ),
-                            ),
-                            child: const Text("Create"),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),

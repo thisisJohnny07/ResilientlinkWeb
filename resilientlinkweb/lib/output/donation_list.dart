@@ -195,7 +195,7 @@ class _DonationListState extends State<DonationList> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
-                            "Proponents: ",
+                            "Beneficiaries: ",
                             style:
                                 TextStyle(color: Colors.black.withOpacity(.5)),
                           ),
